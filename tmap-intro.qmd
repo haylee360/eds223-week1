@@ -1,0 +1,100 @@
+---
+title: "Introduction to tmap"
+author: "Haylee Oyler"
+format: html
+editor: source
+execute: 
+  warning: false
+  message: false
+editor_options: 
+  chunk_output_type: console
+---
+
+### Setup
+```{r}
+# install.packages("sf")
+# install.packages("stars")
+# install.packages("tmap")
+```
+
+```{r}
+library(sf) # for vector data (more soon!)
+library(stars) # for raster data (more soon!)
+library(tmap) # for static and interactive maps
+library(here)
+```
+
+# Specifying spatial data
+
+```{r}
+# raster of global elevations
+world_elevation <- read_stars(here("data","worldelevation.tif"))
+# stars is a package to read in raster data
+# tif is raster file extension
+
+# country boundaries
+world_vector <- read_sf(here("data","worldvector.gpkg"))
+# geopackage file extension
+
+# major cities
+world_cities <- read_sf(here("data","worldcities.gpkg"))
+```
+
+## Shapes and layers
+tmap follows a lot of conventions to ggplot
+
+```{r}
+# plotting a single spatial object
+
+tm_shape(world_vector) + # defines the spatial object to plot
+  tm_polygons() # defines how to plot the object
+# every function in tmap starts with tm_
+```
+
+## Shapes Hierarchy
+Adding major cities to the plot, elevation, 
+
+```{r}
+# plotting two spatial objects
+tm_shape(world_elevation) + # plot global elevation
+  tm_raster() + # tm_raster for raster data
+tm_shape(world_vector) + # defines the FIRST spatial object to plot
+  tm_borders() + # defines how to plot the FIRST object
+tm_shape(world_cities) + # defines the SECOND objet to plot
+  tm_dots() # defines how to plot the SECOND object
+
+```
+
+Whatever dataset you plot first defines the extent of the map
+```{r}
+tm_shape(world_cities) + # plot world_cities first
+  tm_dots() +
+  tm_text("name") +
+tm_shape(world_elevation) +
+  tm_raster() +
+tm_shape(world_vector) +
+  tm_borders() 
+```
+
+Create the same narrow map, but using `is.master`
+```{r}
+tm_shape(world_elevation) + 
+  tm_raster() + 
+tm_shape(world_vector) +
+  tm_borders() +
+tm_shape(world_cities, is.master = TRUE) + # plot world_cities last, but set as main shape
+  tm_dots() +
+  tm_text("name")
+```
+
+## Map Extent
+`bbox` = bounding box for the extent of your map
+```{r}
+tm_shape(world_elevation, bbox = c(-15, 35, 45, 65)) + # plot global elevation
+  tm_raster() + # tm_raster for raster data
+tm_shape(world_vector) + # defines the FIRST spatial object to plot
+  tm_borders() + # defines how to plot the FIRST object
+tm_shape(world_cities) + # defines the SECOND objet to plot
+  tm_dots() # defines how to plot the SECOND object
+```
+
