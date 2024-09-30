@@ -45,10 +45,10 @@ tmap follows a lot of conventions to ggplot
 
 ```{r}
 # plotting a single spatial object
+# every function in tmap starts with tm_
 
 tm_shape(world_vector) + # defines the spatial object to plot
   tm_polygons() # defines how to plot the object
-# every function in tmap starts with tm_
 ```
 
 ## Shapes Hierarchy
@@ -96,5 +96,140 @@ tm_shape(world_vector) + # defines the FIRST spatial object to plot
   tm_borders() + # defines how to plot the FIRST object
 tm_shape(world_cities) + # defines the SECOND objet to plot
   tm_dots() # defines how to plot the SECOND object
+```
+
+Can also use a dataset to set the extent
+```{r}
+tm_shape(world_elevation, bbox = world_cities) + # bounding box = extent of world_cities
+  tm_raster() + 
+tm_shape(world_vector) +
+  tm_borders() 
+```
+
+# Layers
+
+## Polygons
+```{r}
+tm_shape(world_vector) +
+  tm_polygons() # colors inside and displays boundaries
+```
+
+Similar arguments to ggplot
+`tm_polygon` is a derived function composed of two basic functions, borders and fill
+```{r}
+tm_shape(world_vector) +
+  tm_polygons(col = "lightblue",
+              border.col = "black",
+              lwd = 0.5, # line width
+              lty = "dashed") # line type
+```
+
+```{r}
+# plot just borders
+
+tm_shape(world_vector) +
+  tm_borders(col = "red")
+```
+
+```{r}
+# fill polygons with fixed color
+
+tm_shape(world_vector) +
+  tm_fill(col = "lightblue")
+```
+
+```{r}
+# fill polygons with a color palette representing a variable
+
+tm_shape(world_vector) +
+  tm_fill("CO2_emissions") # fill with var name
+```
+
+## Symbols
+Can use squares, bubbles, dots, and markers (symbol is default)
+```{r}
+tm_shape(world_cities) +
+  tm_dots()
+```
+
+# Visual Variables
+
+## Color
+```{r}
+# vector of colors
+
+tm_shape(world_vector) +
+  tm_polygons("life_expectancy", # plotting this variable
+              palette = c("yellow", "darkgreen"), # color range
+              title = "Life Expectancy (years)")
+```
+
+```{r}
+# palette function
+
+#install.packages("viridisLite")
+library(viridisLite)
+
+tm_shape(world_vector) +
+  tm_polygons("life_expectancy", 
+              palette = viridis(option = "mako", 8), # 8 is how many colors you want
+              title = "Life Expectancy (years)")
+```
+
+## Size
+
+```{r}
+tm_shape(world_vector) +
+  tm_polygons() +
+tm_shape(world_cities) +
+  tm_symbols(size = "pop2020", 
+             legend.size.is.portrait = TRUE) 
+             
+```
+
+# Layout
+
+## Grid lines
+
+```{r}
+tm_shape(world_vector) +
+  tm_fill() +
+  tm_grid()
+```
+
+Show latitude and longitude
+```{r}
+tm_shape(world_vector) +
+  tm_graticules() + # put graticules "below" the fill in terms of layering so its on bottom
+  tm_fill() 
+
+```
+
+## Scale bar and north arrow 
+If you don't wanna use the grid lines, you can use scale bar and north arrow
+```{r}
+tm_shape(world_vector) +
+  tm_fill() +
+  tm_scale_bar() +
+  tm_compass(position = c("left", "top"))
+```
+
+## Layout options
+
+```{r}
+tm_shape(world_vector) +
+  tm_fill(col = "wb_income_region", 
+          palette = plasma(5),
+          title = "Regional income") +
+  tm_layout(bg.color = "grey95",
+            main.title = "Global income by country", 
+            frame = FALSE) # like theme in ggplot
+
+```
+
+# Interactive Options
+
+```{r}
+
 ```
 
