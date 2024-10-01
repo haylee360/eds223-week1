@@ -230,6 +230,28 @@ tm_shape(world_vector) +
 # Interactive Options
 
 ```{r}
+tmap_mode("view")
+```
 
+```{r}
+tm_shape(world_vector) +
+  tm_fill(col = "gdp_per_cap",
+          title = "GDP per capita") 
+```
+
+```{r}
+tmap_mode("plot")
+```
+
+# Saving maps
+
+```{r}
+map1 <- tm_shape(world_vector) +
+  tm_fill(col = "gdp_per_cap",
+          palette = viridisLite::plasma(10),
+          title = "GDP per capita") +
+  tm_layout(main.title = "Global gross domesic product")
+
+tmap_save(map1, here("tmap-example.png"))
 ```
 
