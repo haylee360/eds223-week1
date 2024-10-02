@@ -1,0 +1,72 @@
+---
+title: "Week 1 Discussion"
+author: "Haylee Oyler"
+format: html
+editor: visual
+execute:
+  message: false
+  warning: false
+editor_options: 
+  chunk_output_type: console
+---
+
+### Setup
+
+```{r}
+library(here)
+library(tidyverse)
+library(stars)
+library(sf)
+library(tmap)
+library(viridisLite)
+```
+
+### Read in the data
+
+```{r}
+ei_points <- sf::read_sf(here::here("data", "easter_island", "ei_points.gpkg"))
+volcanoes <- subset(ei_points, type == "volcano")
+ei_elev <- stars::read_stars(here::here("data", "easter_island", "ei_elev.tif"))
+ei_borders <- sf::read_sf(here::here("data", "easter_island", "ei_border.gpkg"))
+ei_roads <- sf::read_sf(here::here("data", "easter_island", "ei_roads.gpkg"))
+```
+
+# Task
+
+## Make a map of Easter Island
+
+and...
+
+- denote the island’s borders and continuous elevation
+- denote the island’s volcanoes and roads
+- play with the color palette and essential map elements
+
+Create an interactive map of Easter Island
+
+
+```{r}
+tm_shape(ei_borders) +
+  tm_borders(col = "black",
+             lwd = 2) +
+  tm_layout(main.title = "Map of Easter Island Depicting Elevation and Volcanoes") +
+  tm_scale_bar() +
+  tm_compass(position = c("left", "top")) +
+tm_shape(ei_elev) +
+  tm_raster(palette = turbo(5),
+            title = "Elevation (m)") +
+tm_shape(ei_roads) +
+  tm_lines(col = "white") +
+tm_shape(volcanoes) +
+  tm_dots(col = "orangered",
+          size = 0.3) +
+  tm_text("elevation",
+          col = "white",
+          size = 1)
+
+
+```
+
+```{r}
+tmap_mode("view")
+```
+
